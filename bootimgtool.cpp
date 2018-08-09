@@ -21,6 +21,7 @@
 #include <iostream>
 #include <fstream>
 
+
 extern "C"
 {
   #include "bootimg.h"
@@ -82,15 +83,18 @@ int main (int argc, char** argv) {
 		string base_v = Load_File(obase + "-base");
 		string kernel_offset_v = "";
 		string ramdisk_offset_v = Load_File(obase + "-ramdisk_offset");
-		string second_offset_v = Load_File(obase + "-second_offset");;
-		string tags_offset_v = Load_File(obase + "-tags_offset");;
-		string pagesize_v = Load_File(obase + "-pagesize");;
+		string second_offset_v = Load_File(obase + "-second_offset");
+		string tags_offset_v = Load_File(obase + "-tags_offset");
+		string pagesize_v = Load_File(obase + "-pagesize");
+		string os_version_v = Load_File(obase + "-osversion");
+		string os_patch_level_v = Load_File(obase + "-oslevel");
+		string hash_v = Load_File(obase + "-hash");
 		bool get_id = false;
 
 		int result = makebootimg(bootimg.c_str(), kernel_fn.c_str(), ramdisk_fn.c_str(),
 								 second_fn.c_str(), cmdline.c_str(), dt_fn.c_str(), board.c_str(), base_v.c_str(),
 								 kernel_offset_v.c_str(), ramdisk_offset_v.c_str(), second_offset_v.c_str(),
-								 tags_offset_v.c_str(), pagesize_v.c_str(), get_id);
+								 tags_offset_v.c_str(), pagesize_v.c_str(), get_id, os_version_v.c_str(), os_patch_level_v.c_str(), hash_v.c_str());
 
 		if (result == 0)
 			cout << endl << endl << "Successfully repacked files from \"" << dir << "\" to \"" << path << "\"." << endl << endl;
