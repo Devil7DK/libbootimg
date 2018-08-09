@@ -45,7 +45,13 @@ struct boot_img_hdr
     uint32_t tags_addr;    /* physical addr for kernel tags */
     uint32_t page_size;    /* flash page size we assume */
     uint32_t dt_size;      /* device tree in bytes */
-    uint32_t unused;       /* future expansion: should be 0 */
+
+    /* operating system version and security patch level; for
+     * version "A.B.C" and patch level "Y-M-D":
+     * ver = A << 14 | B << 7 | C         (7 bits for each of A, B, C)
+     * lvl = ((Y - 2000) & 127) << 4 | M  (7 bits for Y, 4 bits for M)
+     * os_version = ver << 11 | lvl */
+    uint32_t os_version;
 
     uint8_t name[BOOT_NAME_SIZE]; /* asciiz product name */
 
@@ -110,5 +116,5 @@ struct ptentry {
 
 int unpackbootimg(const char* filename, const char* directory, int pagesize);
 int makebootimg(const char *bootimg, const char *kernel_fn, const char *ramdisk_fn, const char *second_fn, const char *cmdline, const char *dt_fn, const char *board,
-				const char *base_v, const char *kernel_offset_v, const char *ramdisk_offset_v, const char *second_offset_v, const char *tags_offset_v, const char *pagesize_v,
-				bool get_id);
+                const char *base_v, const char *kernel_offset_v, const char *ramdisk_offset_v, const char *second_offset_v, const char *tags_offset_v, const char *pagesize_v,
+                bool get_id, const char *os_version_v, const char *os_patch_level_v, const char *hash_v);
