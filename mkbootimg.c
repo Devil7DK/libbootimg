@@ -56,26 +56,6 @@ oops:
     return 0;
 }
 
-int usage(void)
-{
-    fprintf(stderr,"usage: mkbootimg\n"
-            "       --kernel <filename>\n"
-            "       [ --ramdisk <filename> ]\n"
-            "       [ --second <2ndbootloader-filename> ]\n"
-            "       [ --cmdline <kernel-commandline> ]\n"
-            "       [ --board <boardname> ]\n"
-            "       [ --base <address> ]\n"
-            "       [ --pagesize <pagesize> ]\n"
-            "       [ --dt <filename> ]\n"
-            "       [ --ramdisk_offset <address> ]\n"
-            "       [ --second_offset <address> ]\n"
-            "       [ --tags_offset <address> ]\n"
-            "       [ --id ]\n"
-            "       -o|--output <filename>\n"
-            );
-    return 1;
-}
-
 
 
 static unsigned char padding[131072] = { 0, };
@@ -107,20 +87,37 @@ int write_padding(int fd, unsigned pagesize, unsigned itemsize)
     }
 }
 
-int main(int argc, char **argv)
+
+
+int usage(void)
+{
+    fprintf(stderr,"usage: mkbootimg\n"
+            "       --kernel <filename>\n"
+            "       [ --ramdisk <filename> ]\n"
+            "       [ --second <2ndbootloader-filename> ]\n"
+            "       [ --cmdline <kernel-commandline> ]\n"
+            "       [ --board <boardname> ]\n"
+            "       [ --base <address> ]\n"
+            "       [ --pagesize <pagesize> ]\n"
+            "       [ --dt <filename> ]\n"
+            "       [ --ramdisk_offset <address> ]\n"
+            "       [ --second_offset <address> ]\n"
+            "       [ --tags_offset <address> ]\n"
+            "       [ --id ]\n"
+            "       -o|--output <filename>\n"
+            );
+    return 1;
+}
+
+int makebootimg(const char *bootimg, const char *kernel_fn, const char *ramdisk_fn, const char *second_fn, const char *cmdline, const char *dt_fn, const char *board,
+				const char *base_v, const char *kernel_offset_v, const char *ramdisk_offset_v, const char *second_offset_v, const char *tags_offset_v, const char *pagesize_v,
+				bool get_id)
 {
     boot_img_hdr hdr;
 
-    char *kernel_fn = NULL;
     void *kernel_data = NULL;
-    char *ramdisk_fn = NULL;
     void *ramdisk_data = NULL;
-    char *second_fn = NULL;
     void *second_data = NULL;
-    char *cmdline = "";
-    char *bootimg = NULL;
-    char *board = "";
-    char *dt_fn = 0;
     void *dt_data = 0;
     uint32_t pagesize = 2048;
     int fd;
@@ -133,62 +130,30 @@ int main(int argc, char **argv)
     uint32_t tags_offset    = 0x00000100U;
     size_t cmdlen;
 
-    argc--;
-    argv++;
-
     memset(&hdr, 0, sizeof(hdr));
 
-    bool get_id = false;
-    while(argc > 0){
-        char *arg = argv[0];
-        if (!strcmp(arg, "--id")) {
-            get_id = true;
-            argc -= 1;
-            argv += 1;
-        } else if(argc >= 2) {
-            char *val = argv[1];
-            argc -= 2;
-            argv += 2;
-            if(!strcmp(arg, "--output") || !strcmp(arg, "-o")) {
-                bootimg = val;
-            } else if(!strcmp(arg, "--kernel")) {
-                kernel_fn = val;
-            } else if(!strcmp(arg, "--ramdisk")) {
-                ramdisk_fn = val;
-            } else if(!strcmp(arg, "--second")) {
-                second_fn = val;
-            } else if(!strcmp(arg, "--cmdline")) {
-                cmdline = val;
-            } else if(!strcmp(arg, "--base")) {
-                base = strtoul(val, 0, 16);
-            } else if(!strcmp(arg, "--kernel_offset")) {
-                kernel_offset = strtoul(val, 0, 16);
-            } else if(!strcmp(arg, "--ramdisk_offset")) {
-                ramdisk_offset = strtoul(val, 0, 16);
-            } else if(!strcmp(arg, "--second_offset")) {
-                second_offset = strtoul(val, 0, 16);
-            } else if(!strcmp(arg, "--tags_offset")) {
-                tags_offset = strtoul(val, 0, 16);
-            } else if(!strcmp(arg, "--board")) {
-                board = val;
-            } else if(!strcmp(arg,"--pagesize")) {
-                pagesize = strtoul(val, 0, 10);
-                if ((pagesize != 2048) && (pagesize != 4096)
-                    && (pagesize != 8192) && (pagesize != 16384)
+	if (strcmp(base_v, ""))
+		base = strtoul(base_v, 0, 16);
+	if (strcmp(kernel_offset_v, ""))
+		kernel_offset = strtoul(kernel_offset_v, 0, 16);
+	if (strcmp(ramdisk_offset_v, ""))
+		ramdisk_offset = strtoul(ramdisk_offset_v, 0, 16);
+	if (strcmp(second_offset_v,""))
+		second_offset = strtoul(second_offset_v, 0, 16);
+	if (strcmp(tags_offset_v, ""))
+		tags_offset = strtoul(tags_offset_v, 0, 16);
+
+	if(strcmp(pagesize_v,"")) {
+		pagesize = strtoul(pagesize_v, 0, 10);
+		if ((pagesize != 2048) && (pagesize != 4096)
+			&& (pagesize != 8192) && (pagesize != 16384)
                     && (pagesize != 32768) && (pagesize != 65536)
-                    && (pagesize != 131072)) {
-                    fprintf(stderr,"error: unsupported page size %d\n", pagesize);
-                    return -1;
-                }
-            } else if(!strcmp(arg, "--dt")) {
-                dt_fn = val;
-            } else {
-                return usage();
-            }
-        } else {
-            return usage();
-        }
-    }
+			&& (pagesize != 131072)) {
+			fprintf(stderr,"error: unsupported page size %d\n", pagesize);
+			return -1;
+		}
+	}
+
     hdr.page_size = pagesize;
 
     hdr.kernel_addr =  base + kernel_offset;

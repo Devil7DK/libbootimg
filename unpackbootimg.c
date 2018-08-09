@@ -38,48 +38,14 @@ void write_string_to_file(char* file, char* string)
     fclose(f);
 }
 
-int usage() {
-    printf("usage: unpackbootimg\n");
-    printf("\t-i|--input boot.img\n");
-    printf("\t[ -o|--output output_directory]\n");
-    printf("\t[ -p|--pagesize <size-in-hexadecimal> ]\n");
-    return 0;
-}
-
-int main(int argc, char** argv)
+int unpackbootimg(const char* filename, const char* directory, int pagesize)
 {
     char tmp[PATH_MAX];
-    char* directory = "./";
-    char* filename = NULL;
-    int pagesize = 0;
 
-    argc--;
-    argv++;
-    while(argc > 0){
-        char *arg = argv[0];
-        char *val = argv[1];
-        argc -= 2;
-        argv += 2;
-        if(!strcmp(arg, "--input") || !strcmp(arg, "-i")) {
-            filename = val;
-        } else if(!strcmp(arg, "--output") || !strcmp(arg, "-o")) {
-            directory = val;
-        } else if(!strcmp(arg, "--pagesize") || !strcmp(arg, "-p")) {
-            pagesize = strtoul(val, 0, 16);
-        } else {
-            return usage();
-        }
-    }
-    
-    if (filename == NULL) {
-        return usage();
-    }
-    
     int total_read = 0;
     FILE* f = fopen(filename, "rb");
     boot_img_hdr header;
 
-    //printf("Reading header...\n");
     int i;
     for (i = 0; i <= 512; i++) {
         fseek(f, i, SEEK_SET);
@@ -104,16 +70,16 @@ int main(int argc, char** argv)
     printf("BOARD_PAGE_SIZE %d\n", header.page_size);
     printf("BOARD_SECOND_SIZE %d\n", header.second_size);
     printf("BOARD_DT_SIZE %d\n", header.dt_size);
-    
+
     if (pagesize == 0) {
         pagesize = header.page_size;
     }
-    
+
     //printf("cmdline...\n");
     sprintf(tmp, "%s/%s", directory, basename(filename));
     strcat(tmp, "-cmdline");
     write_string_to_file(tmp, header.cmdline);
-    
+
     //printf("base...\n");
     sprintf(tmp, "%s/%s", directory, basename(filename));
     strcat(tmp, "-base");
@@ -148,7 +114,7 @@ int main(int argc, char** argv)
     char pagesizetmp[200];
     sprintf(pagesizetmp, "%d", header.page_size);
     write_string_to_file(tmp, pagesizetmp);
-    
+
     total_read += sizeof(header);
     //printf("total read: %d\n", total_read);
     total_read += read_padding(f, sizeof(header), pagesize);
@@ -203,9 +169,9 @@ int main(int argc, char** argv)
     total_read += header.dt_size;
     fwrite(dt, header.dt_size, 1, r);
     fclose(d);
-    
+
     fclose(f);
-    
+
     //printf("Total Read: %d\n", total_read);
     return 0;
 }

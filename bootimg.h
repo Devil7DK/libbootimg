@@ -2,20 +2,21 @@
 **
 ** Copyright 2007, The Android Open Source Project
 **
-** Licensed under the Apache License, Version 2.0 (the "License"); 
-** you may not use this file except in compliance with the License. 
-** You may obtain a copy of the License at 
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
 **
-**     http://www.apache.org/licenses/LICENSE-2.0 
+**     http://www.apache.org/licenses/LICENSE-2.0
 **
-** Unless required by applicable law or agreed to in writing, software 
-** distributed under the License is distributed on an "AS IS" BASIS, 
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-** See the License for the specific language governing permissions and 
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
 ** limitations under the License.
 */
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifndef _BOOT_IMAGE_H_
 #define _BOOT_IMAGE_H_
@@ -58,12 +59,12 @@ struct boot_img_hdr
 } __attribute__((packed));
 
 /*
-** +-----------------+ 
+** +-----------------+
 ** | boot header     | 1 page
 ** +-----------------+
-** | kernel          | n pages  
+** | kernel          | n pages
 ** +-----------------+
-** | ramdisk         | m pages  
+** | ramdisk         | m pages
 ** +-----------------+
 ** | second stage    | o pages
 ** +-----------------+
@@ -106,3 +107,8 @@ struct ptentry {
 #endif
 
 #endif
+
+int unpackbootimg(const char* filename, const char* directory, int pagesize);
+int makebootimg(const char *bootimg, const char *kernel_fn, const char *ramdisk_fn, const char *second_fn, const char *cmdline, const char *dt_fn, const char *board,
+				const char *base_v, const char *kernel_offset_v, const char *ramdisk_offset_v, const char *second_offset_v, const char *tags_offset_v, const char *pagesize_v,
+				bool get_id);
