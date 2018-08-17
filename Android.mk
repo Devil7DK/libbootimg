@@ -14,8 +14,8 @@ LOCAL_MODULE				:= libbootimg
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_SRC_FILES				:= utils/dump_image.c utils/erase_image.c utils/flash_image.c
-LOCAL_STATIC_LIBRARIES			:= libmtdutils
+LOCAL_SRC_FILES				:= utils/flashutils.c
+LOCAL_STATIC_LIBRARIES			:= libmtdutils libmmcutils libbmlutils
 LOCAL_C_INCLUDES			:= bootable/recovery/mtdutils
 LOCAL_MODULE				:= libimgutils
 include $(BUILD_STATIC_LIBRARY)
@@ -24,7 +24,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE                            := bootimgtool
 LOCAL_MODULE_TAGS                       := optional
 LOCAL_SRC_FILES                         := bootimgtool.cpp
-LOCAL_STATIC_LIBRARIES                  := libc libbootimg libmincrypt
+LOCAL_STATIC_LIBRARIES                  := libc libbootimg libimgutils libmincrypt libmtdutils libmmcutils libbmlutils
 LOCAL_LDFLAGS                           := -static
 LOCAL_FORCE_STATIC_EXECUTABLE           := true
 LOCAL_MODULE_CLASS			:= EXECUTABLES
