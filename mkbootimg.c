@@ -340,7 +340,7 @@ int makebootimg(const char *bootimg, const char *kernel_fn, const char *ramdisk_
         hdr.ramdisk_size = ramdisk_sz;
     }
 
-    if(second_fn) {
+    if(second_fn && access(second_fn, F_OK) != -1) {
         second_data = load_file(second_fn, &second_sz);
         if(second_data == 0) {
             fprintf(stderr,"error: could not load secondstage '%s'\n", second_fn);
@@ -349,7 +349,7 @@ int makebootimg(const char *bootimg, const char *kernel_fn, const char *ramdisk_
     }
     hdr.second_size = second_sz;
 
-    if(dt_fn) {
+    if(dt_fn && access(dt_fn, F_OK) != -1) {
         dt_data = load_file(dt_fn, &dt_sz);
         if (dt_data == 0) {
             fprintf(stderr,"error: could not load device tree image '%s'\n", dt_fn);
