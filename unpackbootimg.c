@@ -145,79 +145,79 @@ int unpackbootimg(const char* filename, const char* directory, int pagesize)
     }
 
     //printf("cmdline...\n");
-    sprintf(tmp, "%s/%s", directory, basename(filename));
-    strcat(tmp, "-cmdline");
+    sprintf(tmp, "%s/", directory);
+    strcat(tmp, "cmdline");
     char cmdlinetmp[BOOT_ARGS_SIZE+BOOT_EXTRA_ARGS_SIZE+1];
     sprintf(cmdlinetmp, "%.*s%.*s", BOOT_ARGS_SIZE, header.cmdline, BOOT_EXTRA_ARGS_SIZE, header.extra_cmdline);
     cmdlinetmp[BOOT_ARGS_SIZE+BOOT_EXTRA_ARGS_SIZE]='\0';
     write_string_to_file(tmp, cmdlinetmp);
 
     //printf("board...\n");
-    sprintf(tmp, "%s/%s", directory, basename(filename));
-    strcat(tmp, "-board");
+    sprintf(tmp, "%s/", directory);
+    strcat(tmp, "board");
     write_string_to_file(tmp, (char *)header.name);
 
     //printf("base...\n");
-    sprintf(tmp, "%s/%s", directory, basename(filename));
-    strcat(tmp, "-base");
+    sprintf(tmp, "%s/", directory);
+    strcat(tmp, "base");
     char basetmp[200];
     sprintf(basetmp, "%08x", base);
     write_string_to_file(tmp, basetmp);
 
     //printf("pagesize...\n");
-    sprintf(tmp, "%s/%s", directory, basename(filename));
-    strcat(tmp, "-pagesize");
+    sprintf(tmp, "%s/", directory);
+    strcat(tmp, "pagesize");
     char pagesizetmp[200];
     sprintf(pagesizetmp, "%d", header.page_size);
     write_string_to_file(tmp, pagesizetmp);
 
     //printf("kerneloff...\n");
-    sprintf(tmp, "%s/%s", directory, basename(filename));
-    strcat(tmp, "-kerneloff");
+    sprintf(tmp, "%s/", directory);
+    strcat(tmp, "kerneloff");
     char kernelofftmp[200];
     sprintf(kernelofftmp, "%08x", header.kernel_addr - base);
     write_string_to_file(tmp, kernelofftmp);
 
     //printf("ramdiskoff...\n");
-    sprintf(tmp, "%s/%s", directory, basename(filename));
-    strcat(tmp, "-ramdiskoff");
+    sprintf(tmp, "%s/", directory);
+    strcat(tmp, "ramdiskoff");
     char ramdiskofftmp[200];
     sprintf(ramdiskofftmp, "%08x", header.ramdisk_addr - base);
     write_string_to_file(tmp, ramdiskofftmp);
 
     //printf("secondoff...\n");
-    sprintf(tmp, "%s/%s", directory, basename(filename));
-    strcat(tmp, "-secondoff");
+    sprintf(tmp, "%s/", directory);
+    strcat(tmp, "secondoff");
     char secondofftmp[200];
     sprintf(secondofftmp, "%08x", header.second_addr - base);
     write_string_to_file(tmp, secondofftmp);
 
     //printf("tagsoff...\n");
-    sprintf(tmp, "%s/%s", directory, basename(filename));
-    strcat(tmp, "-tagsoff");
+    sprintf(tmp, "%s/", directory);
+    strcat(tmp, "tagsoff");
     char tagsofftmp[200];
     sprintf(tagsofftmp, "%08x", header.tags_addr - base);
     write_string_to_file(tmp, tagsofftmp);
 
     if (header.os_version != 0) {
         //printf("os_version...\n");
-        sprintf(tmp, "%s/%s", directory, basename(filename));
-        strcat(tmp, "-osversion");
+        sprintf(tmp, "%s/", directory);
+        strcat(tmp, "osversion");
         char osvertmp[200];
         sprintf(osvertmp, "%d.%d.%d", a, b, c);
         write_string_to_file(tmp, osvertmp);
 
         //printf("os_patch_level...\n");
-        sprintf(tmp, "%s/%s", directory, basename(filename));
-        strcat(tmp, "-oslevel");
+        sprintf(tmp, "%s/", directory);
+        strcat(tmp, "oslevel");
         char oslvltmp[200];
         sprintf(oslvltmp, "%d-%02d", y, m);
         write_string_to_file(tmp, oslvltmp);
     }
 
     //printf("hash...\n");
-    sprintf(tmp, "%s/%s", directory, basename(filename));
-    strcat(tmp, "-hash");
+    sprintf(tmp, "%s/", directory);
+    strcat(tmp, "hash");
     const char *hashtype = detect_hash_type(&header);
     write_string_to_file(tmp, hashtype);
 
@@ -225,8 +225,8 @@ int unpackbootimg(const char* filename, const char* directory, int pagesize)
     //printf("total read: %d\n", total_read);
     total_read += read_padding(f, sizeof(header), pagesize);
 
-    sprintf(tmp, "%s/%s", directory, basename(filename));
-    strcat(tmp, "-zImage");
+    sprintf(tmp, "%s/", directory);
+    strcat(tmp, "zImage");
     FILE *k = fopen(tmp, "wb");
     byte* kernel = (byte*)malloc(header.kernel_size);
     //printf("Reading kernel...\n");
@@ -238,8 +238,8 @@ int unpackbootimg(const char* filename, const char* directory, int pagesize)
     //printf("total read: %d\n", header.kernel_size);
     total_read += read_padding(f, header.kernel_size, pagesize);
 
-    sprintf(tmp, "%s/%s", directory, basename(filename));
-    strcat(tmp, "-ramdisk.gz");
+    sprintf(tmp, "%s/", directory);
+    strcat(tmp, "ramdisk.gz");
     FILE *r = fopen(tmp, "wb");
     byte* ramdisk = (byte*)malloc(header.ramdisk_size);
     //printf("Reading ramdisk...\n");
@@ -252,8 +252,8 @@ int unpackbootimg(const char* filename, const char* directory, int pagesize)
     total_read += read_padding(f, header.ramdisk_size, pagesize);
 
     if (header.second_size != 0) {
-        sprintf(tmp, "%s/%s", directory, basename(filename));
-        strcat(tmp, "-second");
+        sprintf(tmp, "%s/", directory);
+        strcat(tmp, "second");
         FILE *s = fopen(tmp, "wb");
         byte* second = (byte*)malloc(header.second_size);
         //printf("Reading second...\n");
@@ -267,8 +267,8 @@ int unpackbootimg(const char* filename, const char* directory, int pagesize)
     total_read += read_padding(f, header.second_size, pagesize);
 
     if (header.dt_size != 0) {
-        sprintf(tmp, "%s/%s", directory, basename(filename));
-        strcat(tmp, "-dtb");
+        sprintf(tmp, "%s/", directory);
+        strcat(tmp, "dtb");
         FILE *d = fopen(tmp, "wb");
         byte* dtb = (byte*)malloc(header.dt_size);
         //printf("Reading dtb...\n");

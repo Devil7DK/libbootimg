@@ -44,7 +44,7 @@ int usage(string name) {
 	cout<< "usage: " << name << " <options> <boot-image> <directory>" << endl << endl;
 	cout<< "options:" << endl;
 	cout<< "         x - Extract <boot-image-path> to <directory>" << endl;
-	cout<< "         p - Repack files with <boot-image> basename from <directory> to <boot-image>" << endl << endl;
+	cout<< "         p - Repack files from <directory> to <boot-image>" << endl << endl;
 	cout<< "example:" <<endl;
 	cout<< "         " << name << " x /sdcard/boot.img /sdcard/extracted-bootimage" << endl;
 	cout<< "         " << name << " p /sdcard/boot.img /sdcard/extracted-bootimage" << endl;
@@ -71,24 +71,24 @@ int main (int argc, char** argv) {
 
 		return result;
 	} else if (!strcmp(option, "p")) {
-		string obase = dir + "/" + fname;
+		string obase = dir + "/";
 
-		string bootimg = dir + "/" + "repacked-" + fname;
-		string kernel_fn = obase + "-zImage";
-		string ramdisk_fn = obase + "-ramdisk.gz";
-		string second_fn = obase + "-second";
-		string cmdline = Load_File(obase + "-cmdline");
-		string dt_fn = obase + "-dt";
-		string board = Load_File(obase + "-board");
-		string base_v = Load_File(obase + "-base");
+		string bootimg = path;
+		string kernel_fn = obase + "zImage";
+		string ramdisk_fn = obase + "ramdisk.gz";
+		string second_fn = obase + "second";
+		string cmdline = Load_File(obase + "cmdline");
+		string dt_fn = obase + "dt";
+		string board = Load_File(obase + "board");
+		string base_v = Load_File(obase + "base");
 		string kernel_offset_v = "";
-		string ramdisk_offset_v = Load_File(obase + "-ramdisk_offset");
-		string second_offset_v = Load_File(obase + "-second_offset");
-		string tags_offset_v = Load_File(obase + "-tags_offset");
-		string pagesize_v = Load_File(obase + "-pagesize");
-		string os_version_v = Load_File(obase + "-osversion");
-		string os_patch_level_v = Load_File(obase + "-oslevel");
-		string hash_v = Load_File(obase + "-hash");
+		string ramdisk_offset_v = Load_File(obase + "ramdisk_offset");
+		string second_offset_v = Load_File(obase + "second_offset");
+		string tags_offset_v = Load_File(obase + "tags_offset");
+		string pagesize_v = Load_File(obase + "pagesize");
+		string os_version_v = Load_File(obase + "osversion");
+		string os_patch_level_v = Load_File(obase + "oslevel");
+		string hash_v = Load_File(obase + "hash");
 		bool get_id = false;
 
 		int result = makebootimg(bootimg.c_str(), kernel_fn.c_str(), ramdisk_fn.c_str(),
