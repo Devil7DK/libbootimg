@@ -22,14 +22,13 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
-#include "cutils/log.h"
-#include "flashutils.h"
+#include "mtdutils.h"
+#include "log.h"
+#include "utils.h"
 
 #ifdef LOG_TAG
 #undef LOG_TAG
 #endif
-
-#if 0
 
 #define LOG_TAG "dump_image"
 
@@ -55,7 +54,7 @@ static int die(const char *msg, ...) {
 
 /* Read a flash partition and write it to an image file. */
 
-int dump_image(char* partition_name, char* filename, dump_image_callback callback) {
+int dump_image(char* partition_name, char* filename) {
     MtdReadContext *in;
     const MtdPartition *partition;
     char buf[BLOCK_SIZE + SPARE_SIZE];
@@ -103,8 +102,6 @@ int dump_image(char* partition_name, char* filename, dump_image_callback callbac
             return die("error writing %s", filename);
         }
         total += BLOCK_SIZE;
-        if (callback != NULL)
-            callback(total, partition_size);
     }
 
     mtd_read_close(in);
@@ -114,37 +111,4 @@ int dump_image(char* partition_name, char* filename, dump_image_callback callbac
         return die("error closing %s", filename);
     }
     return 0;
-}
-
-int main(int argc, char **argv)
-{
-    ssize_t (*read_func) (MtdReadContext *, char *, size_t);
-    MtdReadContext *in;
-    const MtdPartition *partition;
-    char buf[BLOCK_SIZE + SPARE_SIZE];
-    size_t partition_size;
-    size_t read_size;
-    size_t total;
-    int fd;
-    int wrote;
-    int len;
-
-    if (argc != 3) {
-        fprintf(stderr, "usage: %s partition file.img\n", argv[0]);
-        return 2;
-    }
-
-    return dump_image(argv[1], argv[2], NULL);
-}
-
-#endif
-
-int main(int argc, char **argv)
-{
-    if (argc != 3) {
-        fprintf(stderr, "usage: %s partition file.img\n", argv[0]);
-        return 2;
-    }
-
-    return backup_raw_partition(NULL, argv[1], argv[2]);
 }

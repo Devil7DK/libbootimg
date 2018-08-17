@@ -24,10 +24,9 @@
 
 #include <fcntl.h>
 
-#include "cutils/log.h"
-#include "flashutils.h"
-
-#if 0
+#include "mtdutils.h"
+#include "log.h"
+#include "utils.h"
 
 #ifdef LOG_TAG
 #undef LOG_TAG
@@ -87,17 +86,4 @@ int main(int argc, char **argv) {
     }
     
     return erase_image(argv[1]);
-}
-
-#endif
-
-
-int main(int argc, char **argv)
-{
-    if (argc != 2) {
-        fprintf(stderr, "usage: %s partition\n", argv[0]);
-        return 2;
-    }
-
-    return erase_raw_partition(NULL, argv[1]);
 }
