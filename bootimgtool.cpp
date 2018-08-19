@@ -32,25 +32,18 @@ extern "C"
 
 using namespace std;
 
-string findfile(string path, string name)
-{
-   DIR* dirFile = opendir( path.c_str() );
-   if ( dirFile )
-   {
-      struct dirent* hFile;
-      errno = 0;
-      while (( hFile = readdir( dirFile )) != NULL )
-      {
-         if ( !strcmp( hFile->d_name, "."  )) continue;
-         if ( !strcmp( hFile->d_name, ".." )) continue;
-
-         if ( ( hFile->d_name[0] == '.' )) continue;
-
-         if ( strstr( hFile->d_name, name.c_str() ))
-            return path + "/" + hFile->d_name;
-      }
-      closedir( dirFile );
-   }
+string findfile(string path, string name) {
+	DIR* dirFile = opendir(path.c_str());
+	if (dirFile) {
+		struct dirent* hFile;
+		errno = 0;
+		while ((hFile = readdir(dirFile)) != NULL) {
+			if ((hFile->d_name[0] == '.')) continue;
+			if (strstr(hFile->d_name, name.c_str()))
+				return path + "/" + hFile->d_name;
+		}
+		closedir(dirFile);
+	}
 	return path + "/" + name;
 }
 
